@@ -127,8 +127,8 @@
                     </div>
                     <div class="panel-body">
                       <a href="{{ url_for('.video', video=video.filename) }}">
-                          <img style="width: 231px !important; height: 173px !important" class="img-responsive img-portfolio img-hover" src="{{ video.thumb }}" alt="{{ video.name }}">
-                        </br>
+                          <img style="width: 231px !important; height: 173px !important" class="img-responsive img-portfolio img-rounded img-thumbnail img-hover" src="{{ video.thumb }}" alt="{{ video.name }}">
+                        <br><br>
                           <a href="{{ url_for('.video', video=video.filename) }}" class="btn btn-default">Watch</a>
                       </a>
                     </div>

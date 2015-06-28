@@ -103,4 +103,4 @@ def listings():
     return render_template('listings.html', query=query, logged_in=hasattr(user, 'email'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, threaded=True)
+    app.run(host='0.0.0.0', port=5000, threaded=True)

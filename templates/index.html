@@ -133,7 +133,7 @@
                     <div class="col-sm-4 col-lg-4 col-md-4">
                         <div class="thumbnail">
                             <a href="{{ url_for('.video', video=video.filename) }}">
-                              <img class="img-responsive img-portfolio img-hover" style="width: 260px !important; height: 195px !important" src="{{ video.thumb }}" alt="">
+                              <img class="img-responsive img-portfolio img-rounded img-thumbnail img-hover" style="width: 260px !important; height: 195px !important" src="{{ video.thumb }}" alt="">
                             </a>
                             <div class="caption">
                                 <h4><a href="{{ url_for('.video', video=video.filename) }}">{{ video.name }}</a>
