@@ -1,72 +1,31 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for
 from flask_stormpath import StormpathManager, user, login_required
-from flask_peewee.db import Database
-from flask.ext.uploads import UploadSet, configure_uploads
 from stormpath.client import Client
 from requests import post
-from peewee import *
-from ffvideo import VideoStream
 from os.path import expanduser
+from videostreamer import config
+from videostreamer.db import VideoManager
+from videostreamer.uploader import UploadManager
+from videostreamer.utils import create_thumbnail
 
 """app config"""
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'ooohprivate'
-app.config['STORMPATH_API_KEY_FILE'] = expanduser('~/.stormpath/apiKey.properties')
-app.config['STORMPATH_APPLICATION'] = 'VideoStreamer'
-app.config['STORMPATH_ENABLE_FACEBOOK'] = True
-app.config['STORMPATH_ENABLE_GOOGLE'] = True
-app.config['STORMPATH_SOCIAL'] = {
-    'FACEBOOK': {
-        'app_id': '1601277736801081',
-        'app_secret': '55aec8cd54286dbe7ab85d541955f55f',
-    },
-    'GOOGLE': {
-        'client_id': '364228911271-99ep9ssr6ci8q221gtn5fbah11cmdop5.apps.googleusercontent.com',
-        'client_secret': 'XsyRPxOuHAp8tDDtSCZNI1gv',
-    }
-}
-
-spm = StormpathManager(app)
+config.prepare(app)
+StormpathManager(app)
 cli = Client(api_key_file_location=app.config['STORMPATH_API_KEY_FILE'])
 app_ref = cli.applications.search('VideoStreamer')[0]
-
-"""database config"""
-DATABASE = {
-    'name': 'jcannon87',
-    'engine': 'peewee.MySQLDatabase',
-    'user': 'root'
-}
-app.config.from_object(__name__)
-db = Database(app)
-
-class Videos(db.Model):
-    filename = CharField()
-    name = CharField()
-    rating = IntegerField()
-    url = CharField()
-    user = CharField()
-    views = IntegerField()
-    description = CharField()
-    thumb = CharField()
-
-    class Meta:
-        db_table = 'Videos'
-
-
-"""upload config"""
-app.config['UPLOADED_VIDEOS_DEST'] = '/var/opt/videos'
-app.config['UPLOADED_IMAGES_DEST'] = '/var/opt/images'
-videos = UploadSet('videos', ('mp4',))
-images = UploadSet('images', ('jpeg',))
-configure_uploads(app, (videos,images,))
+video_handler = VideoManager(app)
+Videos = video_handler.Videos
+uploader = UploadManager(app)
 
 @app.route('/upload/image', methods=['POST'])
 def upload_image():
+    """
+    uploads an image to the specified directory
+    these images are used for thumbnails of videos
+    """
     if 'image' in request.files:
-        """save thumbnail"""
-        filename = images.save(request.files['image'])
-        url = images.url(filename)
-        return url
+        return uploader.save_image(request.files['image'])
 
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
@@ -75,12 +34,10 @@ def upload():
         name = request.form['name']
         desc = request.form['desc']
         """save video"""
-        filename = videos.save(request.files['video'])
-        url = videos.url(filename)
-        path = videos.path(filename)
+        filename = uploader.save_video(request.files['video'])
+        url, path = uploader.lookup_video(filename)
         """create thumbnail"""
-        thumb_name = '/tmp/%s.jpeg' % filename
-        VideoStream(path).get_frame_at_sec(2).image().save(thumb_name)
+        thumb_name = create_thumbnail(path, filename)
         """upload thumbnail"""
         image_payload = {'image': open(thumb_name, 'rb')}
         image_upload_uri = url_for('upload_image', _external=True)
@@ -98,6 +55,10 @@ def upload():
 def server_error(e):
     return e.message
 
+@app.errorhandler(400)
+def server_error(e):
+    return e.message
+
 @app.route('/')
 def front():
     try:
@@ -112,37 +73,26 @@ def front():
 @app.route('/account')
 @login_required
 def account():
-    related_videos = []
-    videos_query = Videos.select().where(Videos.user == user.email).execute()
-    for video in videos_query:
-        related_videos.append(video)
-    return render_template('account.html', logged_in=True, user=user, videos=related_videos)
+    videos = video_handler.get_videos(user.email)
+    return render_template('account.html', logged_in=True, user=user, videos=videos)
 
 @app.route('/account/<username>')
 def other_account(username):
     requested_user = app_ref.accounts.search({'email': username})[0]
-    related_videos = []
-    videos_query = Videos.select().where(Videos.user == requested_user.email).execute()
-    for video in videos_query:
-        related_videos.append(video)
-    return render_template('account.html', logged_in=hasattr(user, 'email'), user=requested_user, videos=related_videos)
+    videos = video_handler.get_videos(requested_user.email)
+    return render_template('account.html', logged_in=hasattr(user, 'email'), user=requested_user, videos=videos)
 
 @app.route('/video/<video>')
 def video(video):
     try:
-        video_url = videos.url(video)
-        video_rec = Videos.get(Videos.url == video_url)
-        username = video_rec.user
-        print username
-        related_videos = []
-        video_query = Videos.select().where(Videos.user == username).execute()
-        for video in video_query:
-            related_videos.append(video)
-        print related_videos
+        video_url = uploader.videos.url(video)
+        video = Videos.get(Videos.url == video_url)
+        username = video.user
+        other_videos = video_handler.get_videos(username)
         return render_template('video.html',
-                                video_rec=video_rec,
+                                video=video,
                                 logged_in=hasattr(user, 'email'),
-                                videos=related_videos)
+                                videos=other_videos)
     except Exception as e:
         print e.message
 
@@ -153,4 +103,4 @@ def listings():
     return render_template('listings.html', query=query, logged_in=hasattr(user, 'email'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, threaded=True)
+    app.run(host='0.0.0.0', port=80, threaded=True)

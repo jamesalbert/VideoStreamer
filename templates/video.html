@@ -87,8 +87,8 @@
         <!-- Portfolio Item Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">{{ video_rec.name }}
-                    <small>uploaded by <a href="{{ url_for('.account', username=video_rec.user) }}">{{ video_rec.user }}</a></small>
+                <h1 class="page-header">{{ video.name }}
+                    <small>uploaded by <a href="{{ url_for('.account', username=video.user) }}">{{ video.user }}</a></small>
                 </h1>
             </div>
         </div>
@@ -100,14 +100,14 @@
             <div class="col-md-8">
                 <!--<img class="img-responsive" src="http://placehold.it/750x500" alt="">-->
                 <video id="video" width="700" height="467" controls autoplay>
-                  <source src="{{ video_rec.url }}" type="video/mp4">
+                  <source src="{{ video.url }}" type="video/mp4">
                   Your browser does not support the video tag.
                 </video>
             </div>
 
             <div class="col-md-4">
                 <h3>Description</h3>
-                <p>{{ video_rec.description }}</p>
+                <p>{{ video.description }}</p>
             </div>
 
         </div>
@@ -117,7 +117,7 @@
         <div class="row">
 
             <div class="col-lg-12">
-                <h3 class="page-header">Other Videos by {{ video_rec.user }}</h3>
+                <h3 class="page-header">Other Videos by {{ video.user }}</h3>
             </div>
             {% for video in videos %}
             <div class="col-sm-3 col-xs-6">
