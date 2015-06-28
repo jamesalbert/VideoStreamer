@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>jcannon87</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{{ url_for('static', filename='account-css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='account-css/modern-business.css') }}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{{ url_for('static', filename='account-font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">VideoStreamer</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-left">
+                  <li>
+                      <a href="/account">Account</a>
+                  </li>
+                  <li>
+                      <a href="/upload">Upload</a>
+                  </li>
+                  <li>
+                      <a href="/logout">Logout</a>
+                  </li>
+                  <li>
+                    <form class="navbar-form" id="search-form" action="/listings" method="post">
+                      <div class="input-group">
+                        <input name="query" style="width: 695px !important" type="text" class="form-control" placeholder="Search for...">
+                        <span class="input-group-btn">
+                          <button id="search-action" class="btn btn-default" type="submit">
+                              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                          </button>
+                        </span>
+                      </div>
+                    </form>
+                  </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Upload Video
+                    <small>Share your experience with the world</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="index.html">Home</a>
+                    </li>
+                    <li class="active">uploads</li>
+                </ol>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Content Row -->
+        <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="index.html" class="list-group-item">Home</a>
+                    <a href="about.html" class="list-group-item">About</a>
+                    <a href="services.html" class="list-group-item">Services</a>
+                    <a href="contact.html" class="list-group-item">Contact</a>
+                    <a href="portfolio-1-col.html" class="list-group-item">1 Column Portfolio</a>
+                    <a href="portfolio-2-col.html" class="list-group-item">2 Column Portfolio</a>
+                    <a href="portfolio-3-col.html" class="list-group-item">3 Column Portfolio</a>
+                    <a href="portfolio-4-col.html" class="list-group-item">4 Column Portfolio</a>
+                    <a href="portfolio-item.html" class="list-group-item">Single Portfolio Item</a>
+                    <a href="blog-home-1.html" class="list-group-item">Blog Home 1</a>
+                    <a href="blog-home-2.html" class="list-group-item">Blog Home 2</a>
+                    <a href="blog-post.html" class="list-group-item">Blog Post</a>
+                    <a href="full-width.html" class="list-group-item">Full Width Page</a>
+                    <a href="sidebar.html" class="list-group-item active">Sidebar Page</a>
+                    <a href="faq.html" class="list-group-item">FAQ</a>
+                    <a href="404.html" class="list-group-item">404</a>
+                    <a href="pricing.html" class="list-group-item">Pricing Table</a>
+                </div>
+            </div>
+            <!-- Content Column -->
+            <div class="col-md-9">
+                <h2>Upload your video</h2>
+                <p>Keep in mind, we only take mp4 videos right now. Go on, try to upload that malicious .sh script. Forget about it!</p>
+                <form id="upload_form" method=POST enctype=multipart/form-data action="{{ url_for('upload') }}">
+                  <div class="form-group">
+                    <label for="name">Video Name</label>
+                    <input type="text" class="form-control" name="name" id="name" maxlength="255" placeholder="My Cat Penny">
+                  </div>
+                  <div class="form-group">
+                    <label for="desc">Description</label>
+                    <input type="text" class="form-control" name="desc" id="desc" maxlength="2083" placeholder="She's just so good!!">
+                  </div>
+                  <div class="form-group">
+                    <label for="video">File input</label>
+                    <input type="file" id="video" name="video">
+                    <p class="help-block">Try not to break anything.</p>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input id="terms" type="checkbox"> I agree that to terms and services
+                    </label>
+                  </div>
+                  <button id="upload_submit" type="submit" class="btn btn-default">Submit</button>
+                </form>
+                </br>
+                <div class="progress">
+                  <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                    <span class="sr-only">0% Complete</span>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; VideoStreamer 2015</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src="{{ url_for('static', filename='account-js/jquery.js') }}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ url_for('static', filename='account-js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript">
+$(document).ready(function() {
+    $('#upload_form').submit(function(e) {
+	if (!$('#name').val().length) {
+	    alert('Please provide a video name');
+            return false;
+	}
+	else if (!$('#desc').val().length) {
+	    alert('Please provide a video description');
+            return false;
+	}
+	else if (!$('#video').val().length) {
+	    alert('Please provide a video');
+            return false;
+	}
+        else if (!$('#terms:checked').length) {
+            alert('Please agree to our terms and services before uploading');
+            return false;
+        }
+        return true;
+    })
+})
+    </script>
+
+</body>
+
+</html>
