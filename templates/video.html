@@ -88,7 +88,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">{{ video.name }}
-                    <small>uploaded by <a href="{{ url_for('.account', username=video.user) }}">{{ video.user }}</a></small>
+                    <small>uploaded by <a href="/account/{{video.user}}">{{ video.user }}</a></small>
                 </h1>
             </div>
         </div>

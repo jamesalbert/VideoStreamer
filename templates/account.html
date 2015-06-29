@@ -127,15 +127,35 @@
     <!-- Page Content -->
     <div class="container">
 
+
         <!-- Marketing Icons Section -->
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">
-                    {{ user.given_name }}'s profile
+                    {{ requested_user.first_name }}'s profile
                 </h1>
+                {% if requested_user == user %}
+                  {% macro show_provider_button(provider_id, display_name, conn) %}
+                    {% if conn %}
+                    <br>
+                    <form action="{{ url_for('social.remove_connection', provider_id=conn.provider_id, provider_user_id=conn.provider_user_id) }}" method="DELETE">
+                      <input class="btn btn-default" type="submit" value="Disconnect {{ display_name }}" />
+                    </form>
+                    {% else %}
+                    <br>
+                    <form action="{{ url_for('social.connect', provider_id=provider_id) }}" method="POST">
+                      <input class="btn btn-default" type="submit" value="Connect {{ display_name }}" />
+                    </form>
+                    {% endif %}
+                {% endmacro %}
+
+                {{ show_provider_button('twitter', 'Twitter', twitter_conn) }}
+
+                {{ show_provider_button('facebook', 'Facebook', facebook_conn) }}
+              {% endif %}
             </div>
             <div class="col-lg-12">
-              <h3>{{ user.given_name}}'s videos</h3>
+              <h3>{{ requested_user.first_name }}'s videos</h3>
             </div>
             {% for video in videos %}
             <div class="col-md-4">

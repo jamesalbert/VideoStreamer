@@ -7,12 +7,10 @@ from flask import (
     url_for,
     jsonify
 )
-from flask_stormpath import (
-    StormpathManager,
-    user,
-    login_required
-)
-from stormpath.client import Client
+from flask_security.decorators import login_required
+from flask_security.core import current_user
+from flask_security.utils import get_post_login_redirect
+from flask.ext.social.utils import get_provider_or_404
 from requests import post
 from os.path import expanduser
 from videostreamer import config
@@ -23,11 +21,10 @@ from videostreamer.utils import create_thumbnail, resize
 """app config"""
 app = Flask(__name__)
 config.prepare(app)
-StormpathManager(app)
-cli = Client(api_key_file_location=app.config['STORMPATH_API_KEY_FILE'])
-app_ref = cli.applications.search('VideoStreamer')[0]
 video_handler = VideoManager(app)
 Videos = video_handler.Videos
+User = video_handler.User
+Role = video_handler.Role
 uploader = UploadManager(app)
 
 @app.route('/upload/image', methods=['POST'])
@@ -56,10 +53,12 @@ def upload():
         thumb = post(image_upload_uri, files=image_payload).json()
         resize(thumb['path'], image_upload_uri)
         """record upload"""
-        Videos.create(filename=filename, rating=0,
-                      user=user.email, views=0,
-                      name=name, description=desc,
-                      url=url, thumb=thumb['url'])
+        video = Videos(filename=filename, rating=0,
+                       user=current_user.email, views=0,
+                       name=name, description=desc,
+                       url=url, thumb=thumb['url'])
+        video_handler.db.session.add(video)
+        video_handler.db.session.commit()
         print 1
         return url_for('video', video=filename)
     print 2
@@ -77,36 +76,53 @@ def server_error(e):
 @app.route('/')
 def front():
     try:
-        related_videos = []
-        videos_query = Videos.select().order_by(Videos.views.desc())
-        for video in videos_query:
-            related_videos.append(video)
-        return render_template('index.html', logged_in=hasattr(user, 'email'), videos=related_videos)
+        related_videos = Videos.query.order_by(Videos.rating)
+        return render_template('index.html', logged_in=current_user.is_authenticated(), videos=related_videos)
     except Exception as e:
         print e.message
 
 @app.route('/account')
 @login_required
 def account():
-    videos = video_handler.get_videos(user.email)
-    return render_template('account.html', logged_in=True, user=user, videos=videos)
+    videos = video_handler.get_videos(current_user.email)
+    return render_template('account.html',
+                           logged_in=current_user.is_authenticated(),
+                           user=current_user,
+                           requested_user=current_user,
+                           videos=videos,
+                           twitter_conn=video_handler.social.twitter.get_connection(),
+                           facebook_conn=video_handler.social.facebook.get_connection())
 
 @app.route('/account/<username>')
 def other_account(username):
-    requested_user = app_ref.accounts.search({'email': username})[0]
+    requested_user = User.query.filter_by(email=username).first()
     videos = video_handler.get_videos(requested_user.email)
-    return render_template('account.html', logged_in=hasattr(user, 'email'), user=requested_user, videos=videos)
+    user = None
+    twitter_conn = None
+    facebook_conn = None
+    if current_user.is_authenticated():
+        if current_user.email == requested_user.email:
+            user = current_user
+            twitter_conn = video_handler.social.twitter.get_connection()
+            facebook_conn = video_handler.social.facebook.get_connection()
+    return render_template('account.html',
+                           logged_in=current_user.is_authenticated(),
+                           requested_user=requested_user,
+                           user=user,
+                           videos=videos,
+                           twitter_conn=twitter_conn,
+                           facebook_conn=facebook_conn)
 
 @app.route('/video/<video>')
 def video(video):
     try:
         video_url = uploader.videos.url(video)
-        video = Videos.get(Videos.url == video_url)
+        video = Videos.query.filter_by(url=video_url).first()
         username = video.user
         other_videos = video_handler.get_videos(username)
         return render_template('video.html',
                                 video=video,
-                                logged_in=hasattr(user, 'email'),
+                                logged_in=current_user.is_authenticated(),
                                 videos=other_videos)
     except Exception as e:
         print e.message
