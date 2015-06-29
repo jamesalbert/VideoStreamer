@@ -2,13 +2,16 @@ from flask.ext.uploads import UploadSet, configure_uploads
 
 class UploadManager(object):
     def __init__(self, app):
-        self.videos = UploadSet('videos', ('mp4',))
+        self.videos = UploadSet('videos', ('mp4','webm','wmv','avi','mov',))
         self.images = UploadSet('images', ('jpeg',))
         configure_uploads(app, (self.videos,self.images,))
 
     def save_image(self, image):
         filename = self.images.save(image)
-        return self.images.url(filename)
+        return {
+            'url': self.images.url(filename),
+            'path': self.images.path(filename)
+        }
 
     def save_video(self, video):
         filename = self.videos.save(video)

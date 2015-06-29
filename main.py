@@ -1,12 +1,24 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
-from flask_stormpath import StormpathManager, user, login_required
+from flask import (
+    Flask,
+    render_template,
+    request,
+    send_file,
+    redirect,
+    url_for,
+    jsonify
+)
+from flask_stormpath import (
+    StormpathManager,
+    user,
+    login_required
+)
 from stormpath.client import Client
 from requests import post
 from os.path import expanduser
 from videostreamer import config
 from videostreamer.db import VideoManager
 from videostreamer.uploader import UploadManager
-from videostreamer.utils import create_thumbnail
+from videostreamer.utils import create_thumbnail, resize
 
 """app config"""
 app = Flask(__name__)
@@ -25,7 +37,7 @@ def upload_image():
     these images are used for thumbnails of videos
     """
     if 'image' in request.files:
-        return uploader.save_image(request.files['image'])
+        return jsonify(uploader.save_image(request.files['image']))
 
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
@@ -41,13 +53,16 @@ def upload():
         """upload thumbnail"""
         image_payload = {'image': open(thumb_name, 'rb')}
         image_upload_uri = url_for('upload_image', _external=True)
-        thumb_url = post(image_upload_uri, files=image_payload).text
+        thumb = post(image_upload_uri, files=image_payload).json()
+        resize(thumb['path'], image_upload_uri)
         """record upload"""
         Videos.create(filename=filename, rating=0,
                       user=user.email, views=0,
                       name=name, description=desc,
-                      url=url, thumb=thumb_url)
-        return redirect(url_for('video', video=filename))
+                      url=url, thumb=thumb['url'])
+        print 1
+        return url_for('video', video=filename)
+    print 2
     return render_template('upload.html')
 
 """error handling"""
@@ -103,4 +118,4 @@ def listings():
     return render_template('listings.html', query=query, logged_in=hasattr(user, 'email'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, threaded=True)
+    app.run(host='0.0.0.0', port=80, threaded=True)
