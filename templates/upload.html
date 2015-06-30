@@ -19,7 +19,7 @@
 
     <!-- Custom Fonts -->
     <link href="{{ url_for('static', filename='account-font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
-
+    <link href="{{ url_for('static', filename='uploadify/uploadify.css') }}" type="text/css" rel="stylesheet" />
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -169,9 +169,10 @@
     <!-- jQuery -->
     <script src="{{ url_for('static', filename='account-js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.form.min.js') }}"></script>
-
+    <script type="text/javascript" src="{{ url_for('static', filename='uploadify/jquery.uploadify.min.js') }}"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="{{ url_for('static', filename='account-js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.md5.js') }}"></script>
     <script type="text/javascript">
 $(document).ready(function() {
     $('#upload_form').submit(function(e) {
@@ -194,6 +195,18 @@ $(document).ready(function() {
       return true;
     })
 
+    $(function() {
+        $('#video').uploadify({
+            'swf'      : '/static/uploadify/uploadify.swf',
+            'uploader' : '/static/uploadify/uploadify.php',
+            'formData' : {
+              'token': $.md5('unique_salt'),
+              'timestamp': ''
+            },
+            'method': 'post'
+            // Put your options here
+        });
+    });
     $('#upload_form').ajaxForm({
       uploadProgress: function(event, position, total, percentComplete) {
         $('#progress-bar').attr('style', 'width: '+percentComplete+'%');
@@ -202,6 +215,7 @@ $(document).ready(function() {
         window.location = text;
       }
     })
+
 })
     </script>
 
