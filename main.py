@@ -39,11 +39,12 @@ def upload_image():
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
-    if request.method == 'POST' and 'video' in request.files:
+    if request.method == 'POST':
         name = request.form['name']
         desc = request.form['desc']
+        filename = request.form['filename']
         """save video"""
-        filename = uploader.save_video(request.files['video'])
+        #filename = uploader.save_video(request.files['video'])
         url, path = uploader.lookup_video(filename)
         """create thumbnail"""
         thumb_name = create_thumbnail(path, filename)

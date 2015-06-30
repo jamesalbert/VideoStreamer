@@ -29,7 +29,7 @@ def prepare(app):
     app.config['SECURITY_PASSWORD_SALT'] = 'sneaky'
     app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
     app.config['SECURITY_REGISTERABLE'] = True
-    app.config['UPLOADED_VIDEOS_DEST'] = '/var/opt/videos'
+    app.config['UPLOADED_VIDEOS_DEST'] = '/var/www/VideoStreamer/upload'
     app.config['UPLOADED_IMAGES_DEST'] = '/var/opt/images'
 
 def prepare_db_model(app):
