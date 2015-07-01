@@ -132,7 +132,7 @@ def video(video):
 def listings():
     pay = request.form.to_dict()
     query = pay['query']
-    return render_template('listings.html', query=query, logged_in=hasattr(user, 'email'))
+    return render_template('listings.html', query=query, logged_in=current_user.is_authenticated())
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True)

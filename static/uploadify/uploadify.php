@@ -18,7 +18,7 @@ if (!empty($_FILES) && $_POST['token'] == $verifyToken) {
 	$targetPath = $_SERVER['DOCUMENT_ROOT'] . $targetFolder;
 	$targetFile = rtrim($targetPath,'/') . '/' . $_FILES['Filedata']['name'];
 	// Validate the file type
-	$fileTypes = array('mp4'); // File extensions
+	$fileTypes = array('mp4','mov','MOV','wmv','avi','webm','ogg','wav'); // File extensions
 	$fileParts = pathinfo($_FILES['Filedata']['name']);
 	echo $targetFile, "\n";
 	if (in_array($fileParts['extension'],$fileTypes)) {

@@ -1,5 +1,6 @@
 from flask_peewee.db import Database
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.mobility import Mobility
 from os.path import expanduser
 
 def prepare(app):
@@ -31,6 +32,7 @@ def prepare(app):
     app.config['SECURITY_REGISTERABLE'] = True
     app.config['UPLOADED_VIDEOS_DEST'] = '/var/www/VideoStreamer/upload'
     app.config['UPLOADED_IMAGES_DEST'] = '/var/opt/images'
+    Mobility(app)
 
 def prepare_db_model(app):
     '''
