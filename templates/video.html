@@ -103,6 +103,9 @@
                   <source src="{{ video.url }}">
                   Your browser does not support the video tag.
                 </video>
+                <div>
+                  <p style="position: absolute; right: 65px"><strong>{{ video.views }}</strong> <little>view{% if video.views == 0 or video.views > 1 %}s{% endif %}</little></p>
+                </div>
             </div>
 
             <div class="col-md-4">
