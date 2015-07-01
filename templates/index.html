@@ -141,7 +141,7 @@
                                 <p>{{ video.description }}</p>
                             </div>
                             <div class="ratings">
-                                <p class="pull-right">{{ video.views }} view{% if video.views > 1 %}s{% endif %}</p>
+                                <p class="pull-right">{{ video.views }} view{% if video.views == 0 or video.views > 1 %}s{% endif %}</p>
                                 <p>
                                     {% for rating in range(video.rating) %}
                                     <span class="glyphicon glyphicon-star"></span>
