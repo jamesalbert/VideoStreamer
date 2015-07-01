@@ -119,6 +119,8 @@ def video(video):
     try:
         video_url = uploader.videos.url(video)
         video = Videos.query.filter_by(url=video_url).first()
+        video.views += 1;
+        video_handler.db.session.commit()
         username = video.user
         other_videos = video_handler.get_videos(username)
         return render_template('video.html',
