@@ -136,7 +136,7 @@
                               <img class="img-responsive img-portfolio img-rounded img-thumbnail img-hover" style="width: 260px !important; height: 195px !important" src="{{ video.thumb }}" alt="">
                             </a>
                             <div class="caption">
-                                <h4><a href="{{ url_for('.video', video=video.filename) }}">{{ video.name }}</a>
+                                <h4 style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"><a href="{{ url_for('.video', video=video.filename) }}">{{ video.name }}</a>
                                 </h4>
                                 <p>{{ video.description }}</p>
                             </div>

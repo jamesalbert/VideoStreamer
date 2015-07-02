@@ -161,7 +161,7 @@
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><i style="overflow:hidden !important; text-overflow-multiline:ellipsis !important" class="fa fa-fw fa-video-camera"></i> {{ video.name }}</h4>
+                        <h4 style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"><i class="fa fa-fw fa-video-camera"></i> {{ video.name }}</h4>
                     </div>
                     <div class="panel-body">
                       <a href="{{ url_for('.video', video=video.filename) }}">
