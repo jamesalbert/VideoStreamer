@@ -216,6 +216,7 @@ $(document).ready(function() {
         $('#video').uploadify({
             'auto'     : false,
             'multi'    : false,
+            'fileSizeLimit': '75MB',
             'swf'      : '/static/uploadify/uploadify.swf',
             'uploader' : '/static/uploadify/uploadify.php',
             'formData' : {
@@ -230,10 +231,6 @@ $(document).ready(function() {
             'onSelect': function(file) {
               $('#upload_failed_IO_ERROR').hide();
               $('#upload_failed_NAME_ERROR').hide();
-              if (hasSpaces(file.name)) {
-                $('#upload_failed_NAME_ERROR').show();
-                $('#video').uploadify('cancel');
-              }
               $('#upload_video').toggle();
             },
             'onFallback': function() {
