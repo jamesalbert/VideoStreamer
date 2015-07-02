@@ -221,6 +221,9 @@ $(document).ready(function() {
             },
             'onFallback': function() {
               alert('Please install Flash to upload a file.');
+            },
+            'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+              $('#upload_video').toggle();
             }
         });
     });
