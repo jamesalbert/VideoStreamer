@@ -207,7 +207,7 @@ $(document).ready(function() {
     $(function() {
         $('#video').uploadify({
             'auto'     : false,
-			'multi'    : false,
+            'multi'    : false,
             'swf'      : '/static/uploadify/uploadify.swf',
             'uploader' : '/static/uploadify/uploadify.php',
             'formData' : {
@@ -228,13 +228,13 @@ $(document).ready(function() {
             },
             'onUploadError' : function(file, errorCode, errorMsg, errorString) {
       			  $('#upload_video').toggle();
-      			  if (errorCode != -280) {
-                      $('#upload_failed_IO_ERROR').show();
-      			  }
+              if (errorCode != -280) {
+                $('#upload_failed_IO_ERROR').show();
+              }
             }
+          });
         });
-    });
-})
+      })
     </script>
 
 </body>
