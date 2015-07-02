@@ -60,9 +60,7 @@ def upload():
                        url=url, thumb=thumb['url'])
         video_handler.db.session.add(video)
         video_handler.db.session.commit()
-        print 1
         return url_for('video', video=filename)
-    print 2
     return render_template('upload.html')
 
 """error handling"""

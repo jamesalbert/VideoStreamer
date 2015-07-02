@@ -148,6 +148,11 @@
                     <span class="sr-only">Error:</span>
                     Upload failed due to network issues. Check to see your network is working.
                   </div>
+                  <div id="upload_failed_NAME_ERROR" class="alert alert-danger" role="alert" hidden>
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    Video names may not contain spaces. Please rename the file and try again.
+                  </div>
                   <p class="help-block">Try not to break anything.</p>
                 </div>
                 <div class="form-group">
@@ -181,6 +186,9 @@
     <script src="{{ url_for('static', filename='js/jquery.md5.js') }}"></script>
     <script type="text/javascript">
 $(document).ready(function() {
+    function hasSpaces(s) {
+      return s.indexOf(' ') >= 0;
+    }
     $('#upload_video').slideUp();
     $('#upload_video').click(function() {
     	if (!$('#name').val().length) {
@@ -219,15 +227,20 @@ $(document).ready(function() {
               $('#filename').val(file.name);
               $('#upload_form').submit();
             },
-            'onSelect': function() {
-              $('#upload_video').toggle();
+            'onSelect': function(file) {
               $('#upload_failed_IO_ERROR').hide();
+              $('#upload_failed_NAME_ERROR').hide();
+              if (hasSpaces(file.name)) {
+                $('#upload_failed_NAME_ERROR').show();
+                $('#video').uploadify('cancel');
+              }
+              $('#upload_video').toggle();
             },
             'onFallback': function() {
               alert('Please install Flash to upload a file.');
             },
             'onUploadError' : function(file, errorCode, errorMsg, errorString) {
-      			  $('#upload_video').toggle();
+              $('#upload_video').toggle();
               if (errorCode != -280) {
                 $('#upload_failed_IO_ERROR').show();
               }
