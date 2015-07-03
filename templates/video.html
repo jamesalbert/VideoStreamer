@@ -167,11 +167,16 @@
     <script type="text/javascript">
     videojs('video', {
       plugins: {
-        seek: {}
+        seek: {'seek_param': 'start'}
       }
     })
     video = videojs('video');
     video.seek();
+    video.on('seeking', function() {
+      time = video.currentTime();
+      video.currentTime(time);
+      return;
+    })
     </script>
 </body>
 
