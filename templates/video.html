@@ -16,6 +16,7 @@
 
     <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='css/portfolio-item.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/video-js.css') }}" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -99,7 +100,7 @@
 
             <div class="col-md-8">
                 <!--<img class="img-responsive" src="http://placehold.it/750x500" alt="">-->
-                <video id="video" width="700" height="467" controls autoplay>
+                <video class="video-js vjs-default-skin" data-setup='{}' id="video" width="700" height="467" controls autoplay>
                   <source src="{{ video.url }}">
                   Your browser does not support the video tag.
                 </video>
@@ -161,7 +162,15 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/videojs-seek.min.js') }}"></script>
+    <script type="text/javascript">
+    videojs('video', {
+      plugins: {
+        seek: {}
+      }
+    })
+    </script>
 </body>
 
 </html>
