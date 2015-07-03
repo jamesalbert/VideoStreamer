@@ -163,8 +163,9 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/video.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/videojs-seek.min.js') }}"></script>
+    <!--<script src="{{ url_for('static', filename='js/videojs-seek.min.js') }}"></script>-->
     <script type="text/javascript">
+    /*
     videojs('video', {
       plugins: {
         seek: {'seek_param': 'start'}
@@ -177,6 +178,7 @@
       video.currentTime(time);
       return;
     })
+    */
     </script>
 </body>
 
